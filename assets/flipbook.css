@@ -1,0 +1,410 @@
+.flipbook-widget .front_cover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transform-origin: center left;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+  background-image: url("/wp-content/uploads/2025/09/flip_book_edge_shading.webp");
+  z-index: 99;
+}
+
+.flipbook-widget .front_cover img.cover_image {
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.flipbook-widget .front_cover::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgb(220, 20, 60);
+  /* rojo visible al girar */
+  border-radius: 2.5px 5px 5px 2.5px;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  z-index: 1;
+}
+
+/* RESET CSS SOLO DENTRO DEL FLIPBOOK */
+.flipbook-widget *,
+.flipbook-widget *::before,
+.flipbook-widget *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* VARIABLES */
+.flipbook-widget {
+  --dark-color: rgb(2, 4, 8);
+  --dark-hover: rgba(255, 255, 255, 0.1);
+
+  --light-color: rgb(245, 245, 245);
+  --light-hover: rgba(0, 0, 0, 0.1);
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: monospace, sans-serif;
+  font-size: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+/* MODO CLARO / OSCURO */
+.flipbook-widget.light-mode {
+  color: var(--dark-color);
+  background-color: var(--light-color);
+}
+
+.flipbook-widget.light-mode #toggle-mode-btn:hover {
+  background-color: var(--light-hover);
+}
+
+.flipbook-widget.dark-mode {
+  color: var(--light-color);
+  background-color: var(--dark-color);
+}
+
+.flipbook-widget.dark-mode #toggle-mode-btn:hover {
+  background-color: var(--dark-hover);
+}
+
+/* LINKS */
+.flipbook-widget a {
+  text-decoration: none;
+  color: var(--dark-color);
+}
+
+/* OCULTAR INPUTS */
+.flipbook-widget input {
+  display: none;
+}
+
+/* BOTÓN MODO */
+.flipbook-widget #toggle-mode-btn {
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+/* ENLACES */
+.flipbook-widget #portfolio-link {
+  padding-right: 0.5rem;
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  font-size: 0.75rem;
+}
+
+.flipbook-widget #github-link {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+}
+
+/* RESPONSIVE WARNING */
+.flipbook-widget #responsive-warning {
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  font-size: 1rem;
+  text-align: center;
+  z-index: 9999;
+}
+
+.flipbook-widget .warning-icons {
+  font-size: 10rem;
+}
+
+@media (max-width: 768px) {
+  .flipbook-widget #responsive-warning.show {
+    display: flex;
+  }
+}
+
+/* FLIP BOOK */
+.flipbook-widget #flip_book {
+  width: 298px;
+  height: 420px;
+  position: relative;
+  transition-duration: 1s;
+  perspective: 2000px;
+}
+
+.flipbook-widget .front_cover,
+.flipbook-widget .back_cover {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2.5px 5px 5px 2.5px;
+  background-image: url(/wp-content/uploads/2025/09/flip_book_edge_shading.webp);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgb(220, 20, 60);
+  box-shadow: 0 0 5px 0 rgba(25, 25, 25, 0.25);
+}
+
+.flipbook-widget .front_cover {
+  position: absolute;
+  cursor: pointer;
+  transform-origin: center left;
+  transition: transform 0.5s;
+  z-index: 99;
+}
+
+.flipbook-widget .front_cover label {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  cursor: pointer;
+}
+
+.flipbook-widget .page {
+  width: 288px;
+  height: 400px;
+  position: absolute;
+  top: 10px;
+  left: 1px;
+  border-radius: 0 5px 5px 0;
+  background-color: white;
+  transform-origin: left;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+  transition-duration: 0.5s;
+}
+
+.flipbook-widget .front_page,
+.flipbook-widget .back_page {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+}
+
+.flipbook-widget .front_page label,
+.flipbook-widget .back_page label {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.flipbook-widget .back_page {
+  transform: rotateY(180deg);
+}
+
+.flipbook-widget .edge_shading {
+  width: 288px;
+  height: 400px;
+  position: absolute;
+  z-index: 98;
+}
+
+.flipbook-widget .front_content,
+.flipbook-widget .back_content {
+  width: 287px;
+  height: 398px;
+  position: absolute;
+  top: 1px;
+  border-radius: 0 5px 5px 0;
+  z-index: 97;
+}
+
+.flipbook-widget .back_content {
+  left: 1px;
+  border-radius: 5px 0 0 5px;
+}
+
+.flipbook-widget .back_cover {
+  position: relative;
+  z-index: -1;
+}
+
+/* CHECKBOX INTERACTIONS */
+.flipbook-widget #cover_checkbox:checked ~ #flip_book {
+  transform: translateX(144px);
+}
+
+.flipbook-widget #cover_checkbox:checked ~ #flip_book .front_cover {
+  transform: rotateY(-180deg);
+  transition: transform 1.5s, z-index 0.5s 0.5s;
+  z-index: 1;
+}
+
+.flipbook-widget #cover_checkbox:checked ~ #flip_book #cover {
+  width: 80%;
+  height: 80%;
+  position: absolute;
+}
+
+.flipbook-widget .back_page .edge_shading {
+  width: 100%;
+  /* Ocupa toda la página */
+  height: 100%;
+  /* Ocupa toda la página */
+  position: absolute;
+  top: 0;
+  /* Alineada al top */
+  left: 0;
+  /* Alineada al left */
+  z-index: 99;
+  /* Encima de back_content (97) */
+  pointer-events: none;
+  /* No interfiere con clicks */
+}
+
+.front_page h2,
+.back_page h2 {
+  padding-top: 20px;
+  text-align: center;
+  font-size: 25px;
+  color: #9e002e;
+  font-family: "crimson text";
+}
+
+.front_page h3,
+.back_page h3 {
+  text-align: center;
+}
+
+.front_page ul,
+.back_page ul {
+  margin-top: 10px;
+  padding: 0 10px;
+  max-height: 330px;
+  overflow: hidden;
+  font-size: 15px;
+  font-family: "crimson text";
+}
+
+.front_page li,
+.back_page li {
+  list-style: none;
+  text-align: center;
+  line-height: 1.35;
+}
+/*RESPONSIVE*/
+/****************************
+ * FLIPBOOK RESPONSIVE CSS *
+ ****************************/
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .flipbook-widget #flip_book {
+    width: 240px;
+    height: 340px;
+  }
+
+  .flipbook-widget .page {
+    width: 230px;
+    height: 320px;
+  }
+
+  .flipbook-widget .front_content,
+  .flipbook-widget .back_content {
+    width: 229px;
+    height: 318px;
+  }
+
+  .front_page h2,
+  .back_page h2 {
+    font-size: 20px;
+  }
+
+  .front_page ul,
+  .back_page ul {
+    font-size: 13px;
+    max-height: 260px;
+  }
+}
+
+/* Móviles grandes */
+@media (max-width: 768px) {
+  .flipbook-widget #flip_book {
+    width: 180px;
+    height: 260px;
+  }
+
+  .flipbook-widget .page {
+    width: 170px;
+    height: 240px;
+  }
+
+  .flipbook-widget .front_content,
+  .flipbook-widget .back_content {
+    width: 169px;
+    height: 238px;
+  }
+
+  .front_page h2,
+  .back_page h2 {
+    font-size: 16px;
+  }
+
+  .front_page ul,
+  .back_page ul {
+    font-size: 12px;
+    max-height: 200px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .flipbook-widget #flip_book {
+    width: 150px;
+    height: 220px;
+  }
+
+  .flipbook-widget .page {
+    width: 140px;
+    height: 200px;
+  }
+
+  .flipbook-widget .front_content,
+  .flipbook-widget .back_content {
+    width: 139px;
+    height: 198px;
+  }
+
+  .front_page h2,
+  .back_page h2 {
+    font-size: 14px;
+  }
+
+  .front_page ul,
+  .back_page ul {
+    font-size: 11px;
+    max-height: 160px;
+  }
+}
