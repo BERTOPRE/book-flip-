@@ -69,17 +69,33 @@ document.addEventListener("DOMContentLoaded", () => {
     let autoOpened = false;
     const COVER_DELAY = 1000; // ms antes de empezar
     const PAGE_FLIP_INTERVAL = 300; // ms entre páginas
+    // === calcular índice destino según el último contenido real ===
+    const lastPageId = parseInt(widget.dataset.lastPageId || "", 10);
+    const lastSide = (widget.dataset.lastSide || "front").toLowerCase();
+
+    // checkbox correspondiente a esa hoja
+    const lastCb = Number.isFinite(lastPageId)
+      ? widget.querySelector(`#page${lastPageId}_checkbox`)
+      : null;
+
+    // índice del checkbox en el array total (incluye cover y page1)
+    const lastIdx = lastCb ? checkboxes.indexOf(lastCb) : checkboxes.length - 1;
+
+    // Si el último contenido está en el FRONT de esa hoja, nos quedamos
+    // en el checkbox anterior para que la hoja no se voltee.
+    // Si está en BACK, llegamos hasta ese checkbox.
+    let targetIndex = lastIdx + (lastSide === "front" ? -1 : 0);
+    if (targetIndex < 0) targetIndex = 0;
 
     function flipToLastPage() {
       let i = 0;
-      const total = checkboxes.length;
 
-      // 🔒 desactivar botones e interacción
+      // 🔒 desactivar controles e interacción mientras anima
       btnPrev?.setAttribute("disabled", "true");
       btnNext?.setAttribute("disabled", "true");
       btnFs?.setAttribute("disabled", "true");
       btnZoom?.setAttribute("disabled", "true");
-      widget.classList.add("animating"); // opcional para bloquear clicks en labels vía CSS
+      widget.classList.add("animating"); // en CSS: .flipbook-widget.animating label{pointer-events:none}
 
       function next() {
         if (checkboxes[i]) checkboxes[i].checked = true;
@@ -87,14 +103,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (currentPageSpan) currentPageSpan.textContent = currentIndex + 1;
 
         i++;
-        if (i < total) {
+        if (i <= targetIndex) {
           // easing: rápido al inicio, más lento al final
-          const progress = i / total;
-          const delay = 60 + progress * 340;
-
+          const denom = Math.max(1, targetIndex);
+          const progress = i / denom;
+          const delay = 60 + progress * 340; // ajusta a tu gusto
           setTimeout(next, delay);
         } else {
-          // ✅ cuando termina, reactivar botones e interacción
+          // reactivar al terminar
           btnPrev?.removeAttribute("disabled");
           btnNext?.removeAttribute("disabled");
           btnFs?.removeAttribute("disabled");
