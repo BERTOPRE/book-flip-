@@ -242,18 +242,17 @@
 
 .flipbook-widget .back_page .edge_shading {
   width: 100%;
-  /* Ocupa toda la página */
+
   height: 100%;
-  /* Ocupa toda la página */
+
   position: absolute;
   top: 0;
-  /* Alineada al top */
+
   left: 0;
-  /* Alineada al left */
+
   z-index: 99;
-  /* Encima de back_content (97) */
+
   pointer-events: none;
-  /* No interfiere con clicks */
 }
 
 .front_page h2,
@@ -401,83 +400,15 @@
 .flipbook-widget.fullscreen #flip_book {
   margin: auto;
 }
-/* SOLO en móviles quitar el corrimiento lateral */
+/***********************
+ * SCROLL HORIZONTAL MÓVIL
+ * (sin cambiar tamaños ni estructura)
+ ***********************/
 @media (max-width: 768px) {
-  /* Centrar flipbook en móviles */
-  .flipbook-widget {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .flipbook-widget #flip_book {
-    margin: 0 auto;
-  }
-}
-
-/* Zoom estado */
-.flipbook-widget.zoomed #flip_book {
-  transform: scale(1.5); /* aumenta tamaño */
-  transform-origin: center; /* se centra */
-  transition: transform 0.3s ease;
-}
-
-/* Evita scrollbars mientras está en zoom */
-.flipbook-widget.zoomed {
-  overflow: hidden;
-}
-
-/* Desktop por defecto */
-.desktop-only {
-  display: inline-flex;
-}
-.mobile-only {
-  display: none;
-}
-
-/* En móviles solo aparecen las flechas especiales */
-@media (max-width: 768px) {
-  .desktop-only {
-    display: none;
-  }
-  .mobile-only {
-    display: inline-flex;
-  }
-}
-
-/* ==== VISTA MÓVIL ANCHO COMPLETO ==== */
-@media (max-width: 768px) {
-  .flipbook-widget {
-    width: 100%;
-    max-width: 100%;
-    padding: 0;
-  }
-
-  .flipbook-widget #flip_book {
-    width: 100% !important;
-    height: auto;
-    aspect-ratio: 3 / 4; /* proporción tipo libro */
-    margin: 0;
-    transition: transform 0.6s ease-in-out; /* animación */
-  }
-
-  .flipbook-widget .page,
-  .flipbook-widget .front_content,
-  .flipbook-widget .back_content {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* Animación inicial al abrir: desplazar un poco hacia la derecha */
-  .flipbook-widget.opening #flip_book {
-    transform: translateX(20px); /* efecto reveal */
-  }
-}
-
-/* SOLO en móviles quitar el corrimiento lateral y centrar */
-@media (max-width: 768px) {
+  /* Cuando se abre la portada en móvil, que no se vaya a la izquierda */
   .flipbook-widget #cover_checkbox:checked ~ #flip_book {
-    transform: translateX(0) scale(1) !important; /* sin desplazamiento */
+    transform: translateX(85px) !important; /* ajusta este valor */
+    margin: 0 auto;
   }
 
   .flipbook-widget {
@@ -485,65 +416,32 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 100%;
-    padding: 0;
   }
 
   .flipbook-widget #flip_book {
-    width: 100% !important;
-    height: auto;
-    aspect-ratio: 3 / 4; /* mantiene proporción */
-    margin: 0 auto;
-    transition: transform 0.6s ease-in-out;
+    transform-origin: center center;
   }
 
-  .flipbook-widget .page,
-  .flipbook-widget .front_content,
-  .flipbook-widget .back_content {
-    width: 100% !important;
-    height: 100% !important;
+  .front_page h2,
+  .back_page h2 {
+    font-size: 14px;
   }
 
-  /* Animación reveal */
-  .flipbook-widget.opening #flip_book {
-    transform: translateX(20px); /* pequeño empuje lateral */
-  }
-}
-
-/* Armonía en móvil: portada = páginas */
-@media (max-width: 768px) {
-  /* Cover ocupa todo */
-  .flipbook-widget .front_cover,
-  .flipbook-widget .back_cover {
-    width: 100% !important;
-    height: 100% !important;
-    top: 0 !important;
-    left: 0 !important;
-  }
-
-  /* Las páginas más pequeñas dentro de la pasta */
-  .flipbook-widget .page {
-    width: 94% !important; /* un poco más angostas */
-    height: 92% !important; /* más bajas */
-    top: 4% !important; /* centradas verticalmente */
-    left: 3% !important; /* centradas horizontalmente */
-    border-radius: 3px; /* esquinas suaves */
-  }
-
-  /* Contenido de las páginas */
-  .flipbook-widget .front_content,
-  .flipbook-widget .back_content {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-  }
-}
-@media (max-width: 768px) {
   .front_page ul,
   .back_page ul {
-    max-height: none; /* sin límite */
-    overflow: visible; /* no corta */
-    font-size: 18px; /* letras un poco más pequeñas */
-    line-height: 1.2;
+    font-size: 9px;
+    max-height: 200px;
   }
+
+  .front_page h2,
+  .back_page h2 {
+    padding-top: 10px;
+    text-align: center;
+    font-family: "crimson text";
+  }
+}
+
+/*desactivar clicks al estar la animiacion*/
+.flipbook-widget.animating label {
+  pointer-events: none;
 }

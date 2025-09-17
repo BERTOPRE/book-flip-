@@ -1,5 +1,3 @@
-// assets/flipbook.js
-
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".flipbook-widget").forEach((widget) => {
     const checkboxes = Array.from(
@@ -9,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnPrev = widget.querySelector(".flip-prev");
     const btnNext = widget.querySelector(".flip-next");
     const btnFs = widget.querySelector(".flip-fullscreen");
+    const btnZoom = widget.querySelector(".flip-zoom");
 
     const currentPageSpan = widget.querySelector(".current-page");
     const totalPagesSpan = widget.querySelector(".total-pages");
@@ -17,19 +16,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const total = checkboxes.length;
     if (totalPagesSpan) totalPagesSpan.textContent = total;
 
-    const FLIP_DELAY = 400; // tiempo de la animación en ms (igual que en tu CSS transition)
-
-    let isFlipping = false; // 🔒 bloqueo mientras rota
+    const FLIP_DELAY = 400;
+    let isFlipping = false;
 
     // === Función para ir a una página ===
     function goTo(index) {
-      if (isFlipping) return; // evita clicks múltiples
+      if (isFlipping) return;
       if (index < -1) index = -1;
       if (index > total - 1) index = total - 1;
 
       isFlipping = true;
 
-      // Reinicia todo y marca hasta index
       checkboxes.forEach((cb, i) => {
         cb.checked = i <= index;
       });
@@ -37,163 +34,105 @@ document.addEventListener("DOMContentLoaded", () => {
       currentIndex = index;
       if (currentPageSpan) currentPageSpan.textContent = currentIndex + 1;
 
-      // 🔓 desbloquear después del tiempo de animación
       setTimeout(() => {
         isFlipping = false;
       }, FLIP_DELAY);
     }
 
-    // === Botones ===
+    // Botones
     btnNext?.addEventListener("click", () => goTo(currentIndex + 1));
     btnPrev?.addEventListener("click", () => goTo(currentIndex - 1));
+    btnFs?.addEventListener("click", () =>
+      widget.classList.toggle("fullscreen")
+    );
 
-    btnFs?.addEventListener("click", () => {
-      widget.classList.toggle("fullscreen");
+    // Zoom
+    btnZoom?.addEventListener("click", () => {
+      widget.classList.toggle("zoomed");
+      btnZoom.textContent = widget.classList.contains("zoomed") ? "🔎-" : "🔍";
     });
 
-    // === Cuando se hace click manual en el libro (labels) ===
+    // Click manual
     checkboxes.forEach((cb, i) =>
       cb.addEventListener("change", () => {
-        if (cb.checked) {
-          currentIndex = i;
-        } else {
-          currentIndex = i - 1;
-        }
+        currentIndex = cb.checked ? i : i - 1;
         if (currentPageSpan) currentPageSpan.textContent = currentIndex + 1;
       })
     );
 
-    // === Arrancar en portada cerrada ===
+    // Arrancar cerrado
     goTo(-1);
-  });
 
-  const btnZoom = widget.querySelector(".flip-zoom");
+    /*************
+     * AUTO OPEN AL 60%
+     *************/
+    let autoOpened = false;
+    const COVER_DELAY = 1000; // ms antes de empezar
+    const PAGE_FLIP_INTERVAL = 300; // ms entre páginas
 
-  btnZoom?.addEventListener("click", () => {
-    widget.classList.toggle("zoomed");
+    function flipToLastPage() {
+      let i = 0;
+      const total = checkboxes.length;
 
-    // Cambiar ícono según estado
-    if (widget.classList.contains("zoomed")) {
-      btnZoom.textContent = "🔎-"; // zoom out
-    } else {
-      btnZoom.textContent = "🔍"; // zoom in
+      // 🔒 desactivar botones e interacción
+      btnPrev?.setAttribute("disabled", "true");
+      btnNext?.setAttribute("disabled", "true");
+      btnFs?.setAttribute("disabled", "true");
+      btnZoom?.setAttribute("disabled", "true");
+      widget.classList.add("animating"); // opcional para bloquear clicks en labels vía CSS
+
+      function next() {
+        if (checkboxes[i]) checkboxes[i].checked = true;
+        currentIndex = i;
+        if (currentPageSpan) currentPageSpan.textContent = currentIndex + 1;
+
+        i++;
+        if (i < total) {
+          // easing: rápido al inicio, más lento al final
+          const progress = i / total;
+          const delay = 60 + progress * 340;
+
+          setTimeout(next, delay);
+        } else {
+          // ✅ cuando termina, reactivar botones e interacción
+          btnPrev?.removeAttribute("disabled");
+          btnNext?.removeAttribute("disabled");
+          btnFs?.removeAttribute("disabled");
+          btnZoom?.removeAttribute("disabled");
+          widget.classList.remove("animating");
+        }
+      }
+
+      next();
     }
-  });
-});
 
-// Get elements that change with the mode.
-const toggleModeBtn = document.getElementById("toggle-mode-btn");
-const portfolioLink = document.getElementById("portfolio-link");
-const body = document.body;
+    function is60PercentVisible(el) {
+      const rect = el.getBoundingClientRect();
+      const windowHeight =
+        window.innerHeight || document.documentElement.clientHeight;
 
-// Function to apply mode.
-function applyMode(mode) {
-  body.classList.remove("light-mode", "dark-mode");
-  body.classList.add(mode);
+      const visibleTop = Math.max(0, 0 - rect.top);
+      const visibleBottom = Math.min(rect.height, windowHeight - rect.top);
+      const visibleHeight = visibleBottom - visibleTop;
 
-  if (mode === "dark-mode") {
-    // Set dark mode styles.
-    toggleModeBtn.style.color = "rgb(245, 245, 245)";
-    toggleModeBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
-
-    portfolioLink.style.color = "rgb(245, 245, 245)";
-
-    responsiveWarning.style.backgroundColor = "rgb(2, 4, 8)";
-  } else {
-    // Set light mode styles.
-    toggleModeBtn.style.color = "rgb(2, 4, 8)";
-    toggleModeBtn.innerHTML = '<i class="bi bi-moon-stars-fill"></i>';
-
-    portfolioLink.style.color = "rgb(2, 4, 8)";
-
-    responsiveWarning.style.backgroundColor = "rgb(245, 245, 245)";
-  }
-}
-
-// Check and apply saved mode on page load
-let savedMode = localStorage.getItem("mode");
-
-if (savedMode === null) {
-  savedMode = "light-mode"; // Default mode.
-}
-applyMode(savedMode);
-
-// Toggle mode and save preference.
-toggleModeBtn.addEventListener("click", function () {
-  let newMode;
-
-  if (body.classList.contains("light-mode")) {
-    newMode = "dark-mode";
-  } else {
-    newMode = "light-mode";
-  }
-
-  applyMode(newMode);
-
-  // Save choice.
-  localStorage.setItem("mode", newMode);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  /*************
-   * CONFIGURACIÓN
-   *************/
-  const AUTO_OPEN_PAGE = 3; // Página hasta la que quieres abrir
-  const COVER_DELAY = 2000; // Tiempo en ms antes de empezar a pasar páginas
-  const PAGE_FLIP_INTERVAL = 300; // Tiempo entre cada página (ms)
-
-  /*************
-   * ELEMENTOS DEL FLIPBOOK
-   *************/
-  const flipbook = document.getElementById("flip_book");
-  const flipbookPages = [
-    document.getElementById("cover_checkbox"),
-    document.getElementById("page1_checkbox"),
-    document.getElementById("page2_checkbox"),
-    document.getElementById("page3_checkbox"),
-    document.getElementById("page4_checkbox"),
-    document.getElementById("page5_checkbox"),
-  ];
-
-  let autoOpened = true; // Para que solo se abra una vez
-
-  /*************
-   * FUNCIONES
-   *************/
-  function flipPagesSequentially(targetPage) {
-    let i = 0;
-
-    const interval = setInterval(() => {
-      if (flipbookPages[i]) flipbookPages[i].checked = true;
-      i++;
-      if (i > targetPage) clearInterval(interval);
-    }, PAGE_FLIP_INTERVAL);
-  }
-
-  function isHalfVisible(el) {
-    const rect = el.getBoundingClientRect();
-    const windowHeight =
-      window.innerHeight || document.documentElement.clientHeight;
-    const elementHalf = rect.top + rect.height / 2;
-    return elementHalf >= 0 && elementHalf <= windowHeight;
-  }
-
-  /*************
-   * DETECTOR DE SCROLL
-   *************/
-  window.addEventListener("scroll", () => {
-    if (autoOpened) return;
-
-    if (isHalfVisible(flipbook)) {
-      autoOpened = true;
-
-      // Primero mostrar la portada
-      if (flipbookPages[0]) flipbookPages[1].checked = true;
-
-      // Luego de COVER_DELAY ms empezar a pasar páginas secuencialmente
-      setTimeout(() => {
-        flipPagesSequentially(AUTO_OPEN_PAGE);
-      }, COVER_DELAY);
+      const visibleRatio = visibleHeight / rect.height;
+      return visibleRatio >= 0.6;
     }
+
+    window.addEventListener("scroll", () => {
+      if (autoOpened) return;
+
+      if (is60PercentVisible(widget)) {
+        autoOpened = true;
+
+        // abre portada
+        if (checkboxes[0]) checkboxes[0].checked = true;
+
+        // luego avanza hasta el último
+        setTimeout(() => {
+          flipToLastPage();
+        }, COVER_DELAY);
+      }
+    });
   });
 });
