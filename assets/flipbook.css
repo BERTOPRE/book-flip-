@@ -121,34 +121,6 @@
   left: 1rem;
 }
 
-/* RESPONSIVE WARNING */
-.flipbook-widget #responsive-warning {
-  width: 100%;
-  height: 100%;
-  padding: 2rem;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  font-size: 1rem;
-  text-align: center;
-  z-index: 9999;
-}
-
-.flipbook-widget .warning-icons {
-  font-size: 10rem;
-}
-
-@media (max-width: 768px) {
-  .flipbook-widget #responsive-warning.show {
-    display: flex;
-  }
-}
-
 /* FLIP BOOK */
 .flipbook-widget #flip_book {
   width: 298px;
@@ -379,32 +351,199 @@
   }
 }
 
-/* Móviles pequeños */
-@media (max-width: 480px) {
+/* Barra inferior estilo DFlip */
+.flipbook-widget .flipbook-toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  background: #f4f4f4;
+  border-top: 1px solid #ddd;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+.flipbook-widget .flipbook-toolbar button {
+  background: crimson;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.flipbook-widget .flipbook-toolbar button:hover {
+  background: darkred;
+}
+
+.flipbook-widget .flip-status {
+  min-width: 60px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Pantalla completa */
+.flipbook-widget.fullscreen {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.flipbook-widget.fullscreen #flip_book {
+  margin: auto;
+}
+/* SOLO en móviles quitar el corrimiento lateral */
+@media (max-width: 768px) {
+  /* Centrar flipbook en móviles */
+  .flipbook-widget {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .flipbook-widget #flip_book {
-    width: 150px;
-    height: 220px;
+    margin: 0 auto;
+  }
+}
+
+/* Zoom estado */
+.flipbook-widget.zoomed #flip_book {
+  transform: scale(1.5); /* aumenta tamaño */
+  transform-origin: center; /* se centra */
+  transition: transform 0.3s ease;
+}
+
+/* Evita scrollbars mientras está en zoom */
+.flipbook-widget.zoomed {
+  overflow: hidden;
+}
+
+/* Desktop por defecto */
+.desktop-only {
+  display: inline-flex;
+}
+.mobile-only {
+  display: none;
+}
+
+/* En móviles solo aparecen las flechas especiales */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+  .mobile-only {
+    display: inline-flex;
+  }
+}
+
+/* ==== VISTA MÓVIL ANCHO COMPLETO ==== */
+@media (max-width: 768px) {
+  .flipbook-widget {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
   }
 
-  .flipbook-widget .page {
-    width: 140px;
-    height: 200px;
+  .flipbook-widget #flip_book {
+    width: 100% !important;
+    height: auto;
+    aspect-ratio: 3 / 4; /* proporción tipo libro */
+    margin: 0;
+    transition: transform 0.6s ease-in-out; /* animación */
   }
 
+  .flipbook-widget .page,
   .flipbook-widget .front_content,
   .flipbook-widget .back_content {
-    width: 139px;
-    height: 198px;
+    width: 100% !important;
+    height: 100% !important;
   }
 
-  .front_page h2,
-  .back_page h2 {
-    font-size: 14px;
+  /* Animación inicial al abrir: desplazar un poco hacia la derecha */
+  .flipbook-widget.opening #flip_book {
+    transform: translateX(20px); /* efecto reveal */
+  }
+}
+
+/* SOLO en móviles quitar el corrimiento lateral y centrar */
+@media (max-width: 768px) {
+  .flipbook-widget #cover_checkbox:checked ~ #flip_book {
+    transform: translateX(0) scale(1) !important; /* sin desplazamiento */
   }
 
+  .flipbook-widget {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .flipbook-widget #flip_book {
+    width: 100% !important;
+    height: auto;
+    aspect-ratio: 3 / 4; /* mantiene proporción */
+    margin: 0 auto;
+    transition: transform 0.6s ease-in-out;
+  }
+
+  .flipbook-widget .page,
+  .flipbook-widget .front_content,
+  .flipbook-widget .back_content {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Animación reveal */
+  .flipbook-widget.opening #flip_book {
+    transform: translateX(20px); /* pequeño empuje lateral */
+  }
+}
+
+/* Armonía en móvil: portada = páginas */
+@media (max-width: 768px) {
+  /* Cover ocupa todo */
+  .flipbook-widget .front_cover,
+  .flipbook-widget .back_cover {
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+
+  /* Las páginas más pequeñas dentro de la pasta */
+  .flipbook-widget .page {
+    width: 94% !important; /* un poco más angostas */
+    height: 92% !important; /* más bajas */
+    top: 4% !important; /* centradas verticalmente */
+    left: 3% !important; /* centradas horizontalmente */
+    border-radius: 3px; /* esquinas suaves */
+  }
+
+  /* Contenido de las páginas */
+  .flipbook-widget .front_content,
+  .flipbook-widget .back_content {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+  }
+}
+@media (max-width: 768px) {
   .front_page ul,
   .back_page ul {
-    font-size: 11px;
-    max-height: 160px;
+    max-height: none; /* sin límite */
+    overflow: visible; /* no corta */
+    font-size: 18px; /* letras un poco más pequeñas */
+    line-height: 1.2;
   }
 }

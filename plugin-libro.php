@@ -117,6 +117,7 @@ function buildBook($pagesData)
     </div>
 </div>';
 
+
     // páginas dinámicas
     foreach ($pagesData as $p) {
         $title = esc_html(mb_strtoupper($p['month'], 'UTF-8')) . ' ' . esc_html($p['year']);
@@ -150,7 +151,20 @@ function buildBook($pagesData)
     }
 
 
-    $out .= '<div class="back_cover"></div></div></div>';
+    $out .= '<div class="back_cover"></div></div>';
+
+    // Barra de controles
+    $out .= '<div class="flipbook-toolbar">
+            <button class="flip-prev" type="button" aria-label="Anterior">&#10094;</button>
+            <span class="flip-status"><span class="current-page">1</span> / <span class="total-pages">' . ($numberPages + 1) . '</span></span>
+            <button class="flip-next" type="button" aria-label="Siguiente">&#10095;</button>
+            <button class="flip-fullscreen" type="button" aria-label="Pantalla completa">&#x26F6;</button>
+            <button class="flip-zoom" type="button" aria-label="Zoom">🔍</button>
+
+             <!-- Mobile -->
+    <button class="flip-mobile-prev mobile-only" type="button" aria-label="Anterior móvil">⬅️</button>
+    <button class="flip-mobile-next mobile-only" type="button" aria-label="Siguiente móvil">➡️</button>
+         </div>';
 
     // CSS dinámico
     $out .= '<style>';

@@ -1,19 +1,85 @@
-/*********************
- * RESPONSIVE WARNING *
- *********************/
+// assets/flipbook.js
 
-const responsiveWarning = document.getElementById("responsive-warning");
-// "true" if the site is optimized for responsive design, "false" if not.
-const responsiveDesign = false;
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".flipbook-widget").forEach((widget) => {
+    const checkboxes = Array.from(
+      widget.querySelectorAll('input[type="checkbox"][id$="_checkbox"]')
+    );
 
-// Show mobile warning if the user is on mobile and responsive-design is false.
-if (!responsiveDesign && window.innerWidth <= 768) {
-  responsiveWarning.classList.add("show");
-}
+    const btnPrev = widget.querySelector(".flip-prev");
+    const btnNext = widget.querySelector(".flip-next");
+    const btnFs = widget.querySelector(".flip-fullscreen");
 
-/***********************
- * MODE TOGGLE BEHAVIOR *
- ***********************/
+    const currentPageSpan = widget.querySelector(".current-page");
+    const totalPagesSpan = widget.querySelector(".total-pages");
+
+    let currentIndex = -1; // -1 = portada cerrada
+    const total = checkboxes.length;
+    if (totalPagesSpan) totalPagesSpan.textContent = total;
+
+    const FLIP_DELAY = 400; // tiempo de la animación en ms (igual que en tu CSS transition)
+
+    let isFlipping = false; // 🔒 bloqueo mientras rota
+
+    // === Función para ir a una página ===
+    function goTo(index) {
+      if (isFlipping) return; // evita clicks múltiples
+      if (index < -1) index = -1;
+      if (index > total - 1) index = total - 1;
+
+      isFlipping = true;
+
+      // Reinicia todo y marca hasta index
+      checkboxes.forEach((cb, i) => {
+        cb.checked = i <= index;
+      });
+
+      currentIndex = index;
+      if (currentPageSpan) currentPageSpan.textContent = currentIndex + 1;
+
+      // 🔓 desbloquear después del tiempo de animación
+      setTimeout(() => {
+        isFlipping = false;
+      }, FLIP_DELAY);
+    }
+
+    // === Botones ===
+    btnNext?.addEventListener("click", () => goTo(currentIndex + 1));
+    btnPrev?.addEventListener("click", () => goTo(currentIndex - 1));
+
+    btnFs?.addEventListener("click", () => {
+      widget.classList.toggle("fullscreen");
+    });
+
+    // === Cuando se hace click manual en el libro (labels) ===
+    checkboxes.forEach((cb, i) =>
+      cb.addEventListener("change", () => {
+        if (cb.checked) {
+          currentIndex = i;
+        } else {
+          currentIndex = i - 1;
+        }
+        if (currentPageSpan) currentPageSpan.textContent = currentIndex + 1;
+      })
+    );
+
+    // === Arrancar en portada cerrada ===
+    goTo(-1);
+  });
+
+  const btnZoom = widget.querySelector(".flip-zoom");
+
+  btnZoom?.addEventListener("click", () => {
+    widget.classList.toggle("zoomed");
+
+    // Cambiar ícono según estado
+    if (widget.classList.contains("zoomed")) {
+      btnZoom.textContent = "🔎-"; // zoom out
+    } else {
+      btnZoom.textContent = "🔍"; // zoom in
+    }
+  });
+});
 
 // Get elements that change with the mode.
 const toggleModeBtn = document.getElementById("toggle-mode-btn");
@@ -122,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
       autoOpened = true;
 
       // Primero mostrar la portada
-      if (flipbookPages[0]) flipbookPages[0].checked = true;
+      if (flipbookPages[0]) flipbookPages[1].checked = true;
 
       // Luego de COVER_DELAY ms empezar a pasar páginas secuencialmente
       setTimeout(() => {
